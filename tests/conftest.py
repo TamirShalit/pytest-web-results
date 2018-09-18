@@ -11,6 +11,8 @@ def app():
     try:
         os.environ[app_factory.CONFIG_LOCATION_ENVIRONMENT_VARIABLE] = CONFIG_LOCATION
         flask_app = app_factory.create_app(__name__)
+        app_factory.create_db(flask_app)
+        app_factory.create_rest_api(flask_app)
         with flask_app.app_context():
             yield flask_app
     finally:
