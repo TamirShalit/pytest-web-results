@@ -2,7 +2,6 @@ import json
 import os
 
 import pytest
-import requests
 from webresultserver import app_factory
 
 CONFIG_LOCATION = os.path.join(os.path.dirname(__file__), 'test_config.json')
