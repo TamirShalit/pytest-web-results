@@ -1,12 +1,14 @@
 import pytest
+from tests import conftest
 
 from webresultserver.models.item import ItemState
 
 
 @pytest.fixture
-def assert_test_report(request):
+def assert_test_report(request, flask_client):
     yield
-    # TODO assert answer using REST
+    expected_outcome = request.param
+    conftest.assert_test_outcome(flask_client, request.node.nodeid, expected_outcome)
 
 
 @pytest.mark.parametrize('test_function, assert_test_report', [
