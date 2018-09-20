@@ -9,5 +9,7 @@ setup(
     tests_requires=['pytest-web-results-server', 'pytest-flask'],
     author='Tamir Shalit',
     author_email='shalit.tamir@gmail.com',
-    description='Pytest plugin for viewing results via web server'
+    description='Pytest plugin for viewing results via web server',
+    entry_points={'pytest11': ['webresults = pytestwebresults.plugin']},
+    classifiers=["Framework :: Pytest"]
 )
