@@ -26,5 +26,5 @@ def test_simple_outcome(testdir, live_server, client, test_function, expected_ou
     with open(TEMPLATE_PATH) as template_file:
         test_code = template_file.read().format(test_function=test_function)
     testdir.makepyfile(test_code)
-    testdir.runpytest('--server', '{host}:{port}'.format(host='localhost', port=live_server.port))
+    testdir.runpytest('--server-host', 'localhost', '--server-port', live_server.port)
     assert_test_outcome(client, expected_outcome)
