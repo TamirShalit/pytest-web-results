@@ -6,7 +6,7 @@ setup(
     packages=find_packages(exclude=['tests']),
     url='https://github.com/TamirShalit/pytest-web-results',
     install_requires=['pytest', 'requests'],
-    tests_requires=['pytest-web-results-server', 'pytest-flask'],
+    extras_require={'test': ['pytest-web-results-server', 'pytest-flask']},
     author='Tamir Shalit',
     author_email='shalit.tamir@gmail.com',
     description='Pytest plugin for viewing results via web server',
