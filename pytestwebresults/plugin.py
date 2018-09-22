@@ -34,3 +34,13 @@ def pytest_sessionstart(session):
     """
     if session.config.is_using_web_results:
         session.config.session_id = requests.post(urljoin(session.config.api_base_url, 'session'))
+
+
+def pytest_itemcollected(item):
+    """
+    :type item: _pytest.nodes.Item
+    """
+    if item.config.is_using_web_results:
+        add_item_url = urljoin(item.config.api_base_url,
+                               '/'.join(('test_item', item.config.session_id, item.nodeid)))
+        requests.post(add_item_url)
