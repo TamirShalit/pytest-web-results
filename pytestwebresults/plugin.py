@@ -1,5 +1,7 @@
 from urllib.parse import urljoin
 
+import requests
+
 SERVER_HOST_FLAG = '--server-host'
 SERVER_PORT_FLAG = '--server-port'
 
@@ -23,4 +25,11 @@ def pytest_configure(config):
         server_port = config.getoption(SERVER_PORT_FLAG)
         port_string = ':{port}'.format(port=server_port) if server_port else ''
         config.api_base_url = urljoin('http://{host}{port}'.format(host=server_host,
-                                                                   port=port_string), '/api')
+                                                                   port=port_string), 'api/')
+
+
+def pytest_sessionstart(session):
+    """
+    :type session: _pytest.main.Session
+    """
+    session.config.session_id = requests.post(urljoin(session.config.api_base_url, 'session'))

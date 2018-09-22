@@ -5,7 +5,7 @@ setup(
     version='0.1',
     packages=find_packages(exclude=['tests']),
     url='https://github.com/TamirShalit/pytest-web-results',
-    install_requires=['pytest'],
+    install_requires=['pytest', 'requests'],
     tests_requires=['pytest-web-results-server', 'pytest-flask'],
     author='Tamir Shalit',
     author_email='shalit.tamir@gmail.com',
