@@ -3,6 +3,8 @@ import os
 import pytest
 from webresultserver.models.item import ItemState
 
+from pytestwebresults import plugin
+
 TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), 'simple_outcome_test.template')
 
 
@@ -26,5 +28,6 @@ def test_simple_outcome(testdir, live_server, client, test_function, expected_ou
     with open(TEMPLATE_PATH) as template_file:
         test_code = template_file.read().format(test_function=test_function)
     testdir.makepyfile(test_code)
-    testdir.runpytest('--server-host', 'localhost', '--server-port', live_server.port)
+    testdir.runpytest(plugin.SERVER_HOST_FLAG, 'localhost', plugin.SERVER_PORT_FLAG,
+                      live_server.port)
     assert_test_outcome(client, expected_outcome)
