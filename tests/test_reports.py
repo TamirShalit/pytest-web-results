@@ -1,3 +1,4 @@
+import http
 import os
 
 import pytest
@@ -11,7 +12,7 @@ TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), 'simple_outcome_test.tem
 def assert_test_outcome(flask_client, expected_outcome):
     url_arguments = {'single': True}
     response = flask_client.get('/api/test_item', query_string=url_arguments)
-    assert response.status_code == 200
+    assert response.status_code == http.HTTPStatus.OK
     response_dict = response.get_json()
     print(response_dict)
     assert response_dict['num_results'], "Couldn't find test item"
