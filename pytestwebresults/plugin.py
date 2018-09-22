@@ -32,4 +32,5 @@ def pytest_sessionstart(session):
     """
     :type session: _pytest.main.Session
     """
-    session.config.session_id = requests.post(urljoin(session.config.api_base_url, 'session'))
+    if session.config.is_using_web_results:
+        session.config.session_id = requests.post(urljoin(session.config.api_base_url, 'session'))
