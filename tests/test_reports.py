@@ -12,12 +12,12 @@ TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), 'simple_outcome_test.tem
 def assert_test_outcome(flask_client, expected_outcome):
     url_arguments = {'single': True}
     response = flask_client.get('/api/test_item', query_string=url_arguments)
-    assert response.status_code == http.HTTPStatus.OK
+    assert http.HTTPStatus.OK == response.status_code
     response_dict = response.get_json()
     print(response_dict)
     assert response_dict['num_results'], "Couldn't find test item"
     test_item_dict = response_dict['objects'][0]
-    assert test_item_dict['state'] == expected_outcome.value
+    assert expected_outcome == test_item_dict['state']
 
 
 @pytest.mark.parametrize('test_function, expected_outcome', [
