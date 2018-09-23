@@ -66,3 +66,12 @@ def pytest_runtest_call(item):
         change_state_url = urljoin(item.config.api_base_url,
                                    '/'.join(('change_test_state', item.db_id, 'RUNNING_TEST')))
         requests.put(change_state_url)
+
+
+# noinspection PyUnusedLocal
+@pytest.hookimpl(tryfirst=True)
+def pytest_runtest_teardown(item, nextitem):
+    if item.config.is_using_web_results:
+        change_state_url = urljoin(item.config.api_base_url,
+                                   '/'.join(('change_test_state', item.db_id, 'RUNNING_TEARDOWN')))
+        requests.put(change_state_url)
