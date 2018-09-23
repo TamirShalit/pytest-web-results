@@ -47,3 +47,14 @@ def pytest_itemcollected(item):
                                '/'.join(('add_test_item', item.config.session_id, item.nodeid)))
         response = requests.post(add_item_url)
         item.db_id = response.text.strip()
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_runtest_setup(item):
+    """
+    :type item: _pytest.nodes.Item
+    """
+    if item.config.is_using_web_results:
+        change_state_url = urljoin(item.config.api_base_url,
+                                   '/'.join(('change_test_state', item.db_id, 'RUNNING_SETUP')))
+        requests.put(change_state_url)
