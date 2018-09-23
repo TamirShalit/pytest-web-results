@@ -1,5 +1,6 @@
 from urllib.parse import urljoin
 
+import pytest as pytest
 import requests
 
 SERVER_HOST_FLAG = '--server-host'
@@ -33,7 +34,7 @@ def pytest_sessionstart(session):
     :type session: _pytest.main.Session
     """
     if session.config.is_using_web_results:
-        response = requests.post(urljoin(session.config.api_base_url, 'session'))
+        response = requests.post(urljoin(session.config.api_base_url, 'add_session'))
         session.config.session_id = response.text.strip()
 
 
@@ -43,6 +44,6 @@ def pytest_itemcollected(item):
     """
     if item.config.is_using_web_results:
         add_item_url = urljoin(item.config.api_base_url,
-                               '/'.join(('test_item', item.config.session_id, item.nodeid)))
+                               '/'.join(('add_test_item', item.config.session_id, item.nodeid)))
         response = requests.post(add_item_url)
         item.db_id = response.text.strip()
