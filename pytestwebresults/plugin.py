@@ -35,7 +35,7 @@ def pytest_sessionstart(session):
     """
     if session.config.is_using_web_results:
         response = requests.post(urljoin(session.config.api_base_url, 'add_session'))
-        session.config.session_id = response.text.strip()
+        session.config.session_id = response.json()
 
 
 def pytest_itemcollected(item):
@@ -46,7 +46,7 @@ def pytest_itemcollected(item):
         add_item_url = urljoin(item.config.api_base_url,
                                '/'.join(('add_test_item', item.config.session_id, item.nodeid)))
         response = requests.post(add_item_url)
-        item.db_id = response.text.strip()
+        item.db_id = response.json()
 
 
 # noinspection PyUnresolvedReferences
