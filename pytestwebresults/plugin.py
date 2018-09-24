@@ -1,6 +1,6 @@
 from urllib.parse import urljoin
 
-import pytest as pytest
+import pytest
 import requests
 
 SERVER_HOST_FLAG = '--server-host'
@@ -49,6 +49,7 @@ def pytest_itemcollected(item):
         item.db_id = response.text.strip()
 
 
+# noinspection PyUnresolvedReferences
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_setup(item):
     """
@@ -60,17 +61,24 @@ def pytest_runtest_setup(item):
         requests.put(change_state_url)
 
 
+# noinspection PyUnresolvedReferences
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_call(item):
+    """
+    :type item: _pytest.nodes.Item
+    """
     if item.config.is_using_web_results:
         change_state_url = urljoin(item.config.api_base_url,
                                    '/'.join(('change_test_state', item.db_id, 'RUNNING_TEST')))
         requests.put(change_state_url)
 
 
-# noinspection PyUnusedLocal
+# noinspection PyUnusedLocal,PyIncorrectDocstring,PyUnresolvedReferences
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_teardown(item, nextitem):
+    """
+    :type item: _pytest.nodes.Item
+    """
     if item.config.is_using_web_results:
         change_state_url = urljoin(item.config.api_base_url,
                                    '/'.join(('change_test_state', item.db_id, 'RUNNING_TEARDOWN')))
