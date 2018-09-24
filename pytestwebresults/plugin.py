@@ -7,6 +7,14 @@ SERVER_HOST_FLAG = '--server-host'
 SERVER_PORT_FLAG = '--server-port'
 
 
+def construct_url(config, *args):
+    return urljoin(config.api_base_url, '/'.join(map(str, args)))
+
+
+def construct_change_state_url(item, state):
+    return construct_url(item.config, 'change_test_state', item.db_id, state)
+
+
 def pytest_addoption(parser):
     """
     :type parser: _pytest.config.argparsing.Parser
@@ -34,7 +42,7 @@ def pytest_sessionstart(session):
     :type session: _pytest.main.Session
     """
     if session.config.is_using_web_results:
-        response = requests.post(urljoin(session.config.api_base_url, 'add_session'))
+        response = requests.post(construct_url(session.config, 'add_session'))
         session.config.session_id = response.json()
 
 
@@ -43,37 +51,33 @@ def pytest_itemcollected(item):
     :type item: _pytest.nodes.Item
     """
     if item.config.is_using_web_results:
-        add_item_url = urljoin(item.config.api_base_url,
-                               '/'.join(('add_test_item', item.config.session_id, item.nodeid)))
+        add_item_url = construct_url(item.config, 'add_test_item', item.config.session_id,
+                                     item.nodeid)
         response = requests.post(add_item_url)
         item.db_id = response.json()
 
 
-# noinspection PyUnresolvedReferences
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_setup(item):
     """
     :type item: _pytest.nodes.Item
     """
     if item.config.is_using_web_results:
-        change_state_url = urljoin(item.config.api_base_url,
-                                   '/'.join(('change_test_state', item.db_id, 'RUNNING_SETUP')))
-        requests.put(change_state_url)
+        # noinspection PyTypeChecker
+        requests.put(construct_change_state_url(item, 'RUNNING_SETUP'))
 
 
-# noinspection PyUnresolvedReferences
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_call(item):
     """
     :type item: _pytest.nodes.Item
     """
     if item.config.is_using_web_results:
-        change_state_url = urljoin(item.config.api_base_url,
-                                   '/'.join(('change_test_state', item.db_id, 'RUNNING_TEST')))
-        requests.put(change_state_url)
+        # noinspection PyTypeChecker
+        requests.put(construct_change_state_url(item, 'RUNNING_TEST'))
 
 
-# noinspection PyIncorrectDocstring,PyUnusedLocal,PyUnresolvedReferences
+# noinspection PyIncorrectDocstring,PyUnusedLocal,PyTypeChecker
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """
@@ -86,21 +90,17 @@ def pytest_runtest_makereport(item, call):
             item.test_outcome = report.outcome
         elif report.when == 'teardown':
             if report.outcome == 'passed':
-                change_state_url = urljoin(item.config.api_base_url, '/'.join(
-                    ('change_test_state', item.db_id, item.test_outcome)))
+                change_state_url = construct_change_state_url(item, item.test_outcome)
             else:
-                change_state_url = urljoin(item.config.api_base_url, '/'.join(
-                    ('change_test_state', item.db_id, report.outcome)))
+                change_state_url = construct_change_state_url(item, report.outcome)
             requests.put(change_state_url)
 
 
-# noinspection PyUnusedLocal,PyIncorrectDocstring,PyUnresolvedReferences
+# noinspection PyIncorrectDocstring,PyUnusedLocal,PyTypeChecker
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_teardown(item, nextitem):
     """
     :type item: _pytest.nodes.Item
     """
     if item.config.is_using_web_results:
-        change_state_url = urljoin(item.config.api_base_url,
-                                   '/'.join(('change_test_state', item.db_id, 'RUNNING_TEARDOWN')))
-        requests.put(change_state_url)
+        requests.put(construct_change_state_url(item, 'RUNNING_TEARDOWN'))
