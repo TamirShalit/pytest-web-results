@@ -22,9 +22,9 @@ def assert_test_outcome(flask_client, expected_outcome):
 
 @pytest.mark.parametrize('test_function, expected_outcome', [
     ('lambda: None', ItemState.PASSED),
-    # ('pytest.fail', ItemState.FAILED),
-    # ('pytest.xfail', ItemState.XFAILED),
-    # ('pytest.skip', ItemState.SKIPPED),
+    ('pytest.fail', ItemState.FAILED),
+    ('pytest.xfail', ItemState.XFAILED),
+    ('pytest.skip', ItemState.SKIPPED),
 ])
 def test_simple_outcome(testdir, live_server, client, test_function, expected_outcome):
     with open(TEMPLATE_PATH) as template_file:
