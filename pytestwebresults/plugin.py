@@ -73,6 +73,27 @@ def pytest_runtest_call(item):
         requests.put(change_state_url)
 
 
+# noinspection PyIncorrectDocstring,PyUnusedLocal
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    """
+    :type item: _pytest.nodes.Item
+    """
+    hook_outcome = yield
+    if item.config.is_using_web_results:
+        report = hook_outcome.get_result()
+        if report.when == 'call':
+            item.test_outcome = report.outcome
+        elif report.when == 'teardown':
+            if report.outcome == 'passed':
+                change_state_url = urljoin(item.config.api_base_url, '/'.join(
+                    ('change_test_state', item.db_id, item.test_outcome)))
+            else:
+                change_state_url = urljoin(item.config.api_base_url, '/'.join(
+                    ('change_test_state', item.db_id, report.outcome)))
+            requests.put(change_state_url)
+
+
 # noinspection PyUnusedLocal,PyIncorrectDocstring,PyUnresolvedReferences
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_teardown(item, nextitem):
