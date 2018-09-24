@@ -1,6 +1,7 @@
 import http
 import os
 
+import flask
 import pytest
 from webresultserver.models.item import ItemState
 
@@ -10,14 +11,9 @@ TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), 'simple_outcome_test.tem
 
 
 def assert_test_outcome(flask_client, expected_outcome):
-    url_arguments = {'single': True}
-    response = flask_client.get('/api/test_item', query_string=url_arguments)
+    response = flask_client.get('/api/get_test_state/1')  # type: flask.Response
     assert http.HTTPStatus.OK == response.status_code
-    response_dict = response.get_json()
-    print(response_dict)
-    assert response_dict['num_results'], "Couldn't find test item"
-    test_item_dict = response_dict['objects'][0]
-    assert expected_outcome == test_item_dict['state']
+    assert expected_outcome.name == response.json
 
 
 @pytest.mark.parametrize('test_function, expected_outcome', [
