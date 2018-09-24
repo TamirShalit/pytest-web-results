@@ -73,7 +73,7 @@ def pytest_runtest_call(item):
         requests.put(change_state_url)
 
 
-# noinspection PyIncorrectDocstring,PyUnusedLocal
+# noinspection PyIncorrectDocstring,PyUnusedLocal,PyUnresolvedReferences
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """
